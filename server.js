@@ -33,9 +33,6 @@ app.delete("/api/notes/:id", (req, res, next) => {
     .then(() => res.sendStatus(204))
     .catch(next);
 });
-//GET, POST, DELETE for /api/books
-
-//ERROR: new row for relation "books" violates check constraint "books_name_check"
 
 app.use((req, res, next) => {
   next({
