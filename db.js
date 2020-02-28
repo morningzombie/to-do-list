@@ -1,6 +1,6 @@
 const pg = require("pg");
 const client = new pg.Client(
-  process.env.DATABASE_URL || "postgres://localhost/acme_ownership_db"
+  process.env.DATABASE_URL || "postgres://localhost/todo_db"
 );
 
 client.connect();
