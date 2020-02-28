@@ -13,41 +13,51 @@ app.get("/", (req, res, next) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-//GET, POST, DELETE for /api/notes
-
-app.get("/api/notes", (req, res, next) => {
-  db.readNotes()
-    .then(notes => {
-      console.log("USERS", notes);
-      res.send(notes);
+app.get("/api/things", (req, res, next) => {
+  db.readThings()
+    .then(things => {
+      res.send(things);
     })
     .catch(next);
 });
-app.post("/api/notes", (req, res, next) => {
-  db.createNote(req.body)
-    .then(note => res.send(note))
+
+app.put("/api/things/update/:id", (req, res, next) => {
+  db.markComplete(req.params.id)
+    .then(thing => {
+      res.send(thing);
+    })
     .catch(next);
 });
-app.delete("/api/notes/:id", (req, res, next) => {
-  db.deleteNote(req.params.id)
-    .then(() => res.sendStatus(204))
+
+app.post("/api/things", (req, res, next) => {
+  db.createThing(req.body)
+    .then(thing => {
+      res.send(thing);
+    })
     .catch(next);
 });
 
-app.use((req, res, next) => {
-  next({
-    status: 404,
-    message: `Page not found for ${req.method} ${req.url}`
-  });
+app.delete('/api/things/:id', (req, res, next) => {
+  db.deleteThing(req.params.id)
+      .then(() => res.sendStatus(204))
+      .catch(next);
 });
 
-app.use((err, req, res, next) => {
-  res.status(err.status || 500).send({
-    message: err.message || JSON.stringify(err)
-  });
-});
 
-const port = process.env.PORT || 3000;
+// app.use((req, res, next) => {
+//   next({
+//     status: 404,
+//     message: `Page not found for ${req.method} ${req.url}`
+//   });
+// });
+
+// app.use((err, req, res, next) => {
+//   res.status(err.status || 500).send({
+//     message: err.message || JSON.stringify(err)
+//   });
+// });
+
+const port = process.env.PORT || 8081;
 
 db.sync()
   .then(() => {

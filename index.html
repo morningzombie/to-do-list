@@ -18,53 +18,111 @@
     <script type="text/babel">
       const { useState, useEffect } = React;
 
-      const App = () => {
-        const [notes, setNotes] = useState([]);
-        const [text, setText] = useState("");
-
-        useEffect(() => {
-          axios.get("/api/notes").then(response => setNotes(response.data));
-        }, []);
-
-        const createNote = ev => {
+     
+//====================SECTION ONE: Add things ===========================//
+      const ThingForm = ({ createThing }) => {
+        const [name, setName] = useState("");
+        const onSubmit = ev => {
           ev.preventDefault();
-          axios
-            .post("/api/notes", { text })
-            .then(response => setNotes([response.data, ...notes]))
-            .then(() => setText(""));
-        };
-
-        const deleteNote = noteToDestroy => {
-          axios
-            .delete(`/api/notes/${noteToDestroy.id}`)
-            .then(() =>
-              setNotes(notes.filter(note => note.id !== noteToDestroy.id))
-            );
+          createThing({ name });
         };
         return (
-          <div>
-            <form onSubmit={createNote}>
-              <h2>Add A To Do</h2>
-              <input value={text} onChange={ev => setText(ev.target.value)} />
-              <button onClick={createNote}>Create</button>
+          <section>
+            <form onSubmit={onSubmit}>
+              <h2>New Things</h2>
+              <input value={name} onChange={ev => setName(ev.target.value)} />
+              <button>Create</button>
             </form>
+          </section>
+        );
+      };
 
+//====================SECTION TWO: Things to do ===========================//
+  
+    const Things = ({things, deleteThing, markComplete}) => {
+
+    const getStyle = thing => {
+    return {
+      background: "#f4f4f4",
+      padding: "10px",
+      borderBottom: "1px dotted #ccc",
+      textDecoration: thing.completed ? "line-through" : "none"
+    };
+     if (thing.completed === true) {
+      return {
+        textDecoration: "line-through"
+      };
+    } else {
+      return {
+        textDecoration: "none"
+      };
+    }
+}
+        return (
+          <section>
+            <h2>Things I have to do</h2>
             <ul>
-              {notes.map(note => {
+              {things.map(thing => {
                 return (
-                  <li key={note.id}>
-                    {note.name}{" "}
-                    <button onClick={() => deleteNote(note)}>
-                      Delete Note
-                    </button>
+                  <li className="no-dot" style={getStyle(thing)} key={thing.id}>
+                    <input type="checkbox" onChange={markComplete}  /> {" "}
+
+                    {thing.name}
+                    <button onClick={() => deleteThing(thing)}>x</button>
                   </li>
                 );
               })}
             </ul>
+          </section>
+        );
+      };
+      
+//====================DISPLAY===========================//
+      const App = () => {
+        const [error, setError] = useState("");
+        const [things, setThings] = useState([]);
+        
+        useEffect(() => {
+          axios.get("/api/things").then(response => setThings(response.data));
+        }, []);
+
+
+        const createThing = async thing => {
+          try {
+            const created = (await axios.post("/api/things", thing)).data;
+            setThings([...things, created]);
+            setError("");
+          } catch (ex) {
+            setError(ex.response.data.message);
+          }
+        };
+        
+        const deleteThing = noteToDestroy => {
+          axios
+            .delete(`/api/things/${noteToDestroy.id}`)
+            .then(() =>
+              setThings(things.filter(thing => thing.id !== noteToDestroy.id))
+            );
+        };
+        return (
+          <div>
+            <h1>My To do List</h1>
+            {!!error && <div className="error">{error}</div>}
+           
+            <div className="forms">
+              <ThingForm createThing={createThing} />
+            </div>
+
+            <div className="lists">
+              <Things
+                things={things}
+                deleteThing={deleteThing}
+              />
+            </div>
+          
           </div>
         );
       };
-
       const root = document.querySelector("#root");
       ReactDOM.render(<App />, root);
     </script>
