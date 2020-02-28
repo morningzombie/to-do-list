@@ -1,0 +1,72 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="/assets/styles.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script
+      src="https://unpkg.com/react@16/umd/react.development.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"
+      crossorigin
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-router-dom/5.0.0/react-router-dom.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      const { useState, useEffect } = React;
+
+      const App = () => {
+        const [notes, setNotes] = useState([]);
+        const [text, setText] = useState("");
+
+        useEffect(() => {
+          axios.get("/api/notes").then(response => setNotes(response.data));
+        }, []);
+
+        const createNote = ev => {
+          ev.preventDefault();
+          axios
+            .post("/api/notes", { text })
+            .then(response => setNotes([response.data, ...notes]))
+            .then(() => setText(""));
+        };
+
+        const deleteNote = noteToDestroy => {
+          axios
+            .delete(`/api/notes/${noteToDestroy.id}`)
+            .then(() =>
+              setNotes(notes.filter(note => note.id !== noteToDestroy.id))
+            );
+        };
+        return (
+          <div>
+            <form onSubmit={createNote}>
+              <h2>Add A To Do</h2>
+              <input value={text} onChange={ev => setText(ev.target.value)} />
+              <button onClick={createNote}>Create</button>
+            </form>
+
+            <ul>
+              {notes.map(note => {
+                return (
+                  <li key={note.id}>
+                    {note.name}{" "}
+                    <button onClick={() => deleteNote(note)}>
+                      Delete Note
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        );
+      };
+
+      const root = document.querySelector("#root");
+      ReactDOM.render(<App />, root);
+    </script>
+  </body>
+</html>
