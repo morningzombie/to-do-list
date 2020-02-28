@@ -27,8 +27,6 @@ h2 {
   text-transform: uppercase;
 }
 
-li {
-}
 
 li > * {
   margin: 1rem;
@@ -53,6 +51,9 @@ form {
 form > * {
   margin: 1rem;
 }
-
-section {
+.no-dot {
+list-style: none;
+}
+.strikethrough:checked + span{
+  text-decoration:line-through
 }
