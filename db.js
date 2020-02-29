@@ -11,7 +11,6 @@ const sync = async () => {
 
   DROP TABLE IF EXISTS things;
 
-
   CREATE TABLE things(
       id UUID PRIMARY KEY default uuid_generate_v4(),
       name VARCHAR(255) NOT NULL,
@@ -43,11 +42,10 @@ const deleteThing = async (id) => {
   const SQL = 'DELETE FROM things WHERE id = $1';
   await client.query(SQL, [id]);
 };
-
-const markComplete = async (id) => {
+const markComplete = async (thing) => {
   const SQL = 'UPDATE things SET completed = !completed WHERE id = $1';  
-  await client.query(SQL, [id]);
-  console.log("ID", id)
+  await client.query(SQL, [thing]);
+  console.log("ID", thing)
 
 };
 

@@ -1,5 +1,5 @@
 {
-  "name": "to-do",
+  "name": "to-do-list",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -13,7 +13,6 @@
     "express": "^4.17.1",
     "faker": "^4.1.0",
     "nodemon": "^2.0.2",
-    "pg": "^7.18.2",
-    "uuid": "^7.0.1"
+    "pg": "^7.18.1"
   }
 }

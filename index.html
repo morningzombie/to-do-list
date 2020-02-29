@@ -12,14 +12,23 @@
       crossorigin
     ></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react-router-dom/5.0.0/react-router-dom.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css?family=Reenie+Beanie&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+      crossorigin="anonymous"
+    />
   </head>
   <body>
     <div id="root"></div>
     <script type="text/babel">
       const { useState, useEffect } = React;
 
-     
-//====================SECTION ONE: Add things ===========================//
+      //====================SECTION ONE: Add things ===========================//
       const ThingForm = ({ createThing }) => {
         const [name, setName] = useState("");
         const onSubmit = ev => {
@@ -29,7 +38,7 @@
         return (
           <section>
             <form onSubmit={onSubmit}>
-              <h2>New Things</h2>
+              <h2>Add Things To My List</h2>
               <input value={name} onChange={ev => setName(ev.target.value)} />
               <button>Create</button>
             </form>
@@ -37,38 +46,52 @@
         );
       };
 
-//====================SECTION TWO: Things to do ===========================//
-  
-    const Things = ({things, deleteThing, markComplete}) => {
+      //====================SECTION TWO: Things to do ===========================//
+      console.log("start");
+      const Things = ({ things, deleteThing, markComplete }) => {
+        const getStyle = thing => {
+          document.getElementById("myBigX").className =
+            "glyphicon glyphicon-ok strike";
 
-    const getStyle = thing => {
-    return {
-      background: "#f4f4f4",
-      padding: "10px",
-      borderBottom: "1px dotted #ccc",
-      textDecoration: thing.completed ? "line-through" : "none"
-    };
-     if (thing.completed === true) {
-      return {
-        textDecoration: "line-through"
-      };
-    } else {
-      return {
-        textDecoration: "none"
-      };
-    }
-}
+          return {
+            // background: "#f4f4f4",
+            // padding: "10px",
+            // borderBottom: "1px dotted #ccc",
+            // textDecoration: thing.completed ? "line-through" : "none"
+          };
+
+          //  if (thing.completed === true) {
+          //   return {
+          //     textDecoration: "line-through"
+          //   };
+          // } else {
+          //   return {
+          //     textDecoration: "none"
+          //   };
+          // }
+        };
+        // $('#menu-toggle').click( function(){
+        //     $(this).find('i').toggleClass('glyphicon-arrow-right').toggleClass('glyphicon-arrow-left');
+        // });
+        // const toggleThis = () => {
+        //   document
+        //     .getElementById("myBigX")
+        //     .classList.add(`glyphicon glyphicon-ok`);
+        // };
+
         return (
-          <section>
-            <h2>Things I have to do</h2>
+          <section className="postit">
+            <h2 className="heading">Things I have to do</h2>
             <ul>
               {things.map(thing => {
                 return (
-                  <li className="no-dot" style={getStyle(thing)} key={thing.id}>
-                    <input type="checkbox" onChange={markComplete}  /> {" "}
-
+                  <li className="no-dot" key={thing.id}>
+                    <div
+                      id="myBigX"
+                      className="glyphicon glyphicon-remove postit-font"
+                      onClick={getStyle}
+                    ></div>
                     {thing.name}
-                    <button onClick={() => deleteThing(thing)}>x</button>
                   </li>
                 );
               })}
@@ -76,16 +99,16 @@
           </section>
         );
       };
-      
-//====================DISPLAY===========================//
+      console.log("end");
+      //====================DISPLAY===========================//
+
       const App = () => {
         const [error, setError] = useState("");
         const [things, setThings] = useState([]);
-        
+
         useEffect(() => {
           axios.get("/api/things").then(response => setThings(response.data));
         }, []);
-
 
         const createThing = async thing => {
           try {
@@ -96,7 +119,17 @@
             setError(ex.response.data.message);
           }
         };
-        
+
+        const markComplete = async thing => {
+          try {
+            const updated = (await axios.post("/api/things", thing)).data;
+            setThings([...things, updated]);
+            setError("");
+          } catch (ex) {
+            setError(ex.response.data.message);
+          }
+        };
+
         const deleteThing = noteToDestroy => {
           axios
             .delete(`/api/things/${noteToDestroy.id}`)
@@ -106,20 +139,14 @@
         };
         return (
           <div>
-            <h1>My To do List</h1>
             {!!error && <div className="error">{error}</div>}
-           
+
+            <div className="lists">
+              <Things things={things} deleteThing={deleteThing} />
+            </div>
             <div className="forms">
               <ThingForm createThing={createThing} />
             </div>
-
-            <div className="lists">
-              <Things
-                things={things}
-                deleteThing={deleteThing}
-              />
-            </div>
-          
           </div>
         );
       };
@@ -128,3 +155,20 @@
     </script>
   </body>
 </html>
+
+<!-- <li className="no-dot" style={getStyle(thing)} key={thing.id}>
+  <span class="form-check">
+  <input type="checkbox" class="form-check-input" id="materialUnchecked" onChange={markComplete}  /> {" "}
+  {console.log("thing", thing)}
+  <label class="form-check-label" for="materialUnchecked">{thing.name}</label>
+   </span>
+
+  <div className="glyphicon glyphicon-remove" onClick={() => deleteThing(thing)}> </div>
+  </li>
+); -->
+
+<!-- <div className="glyphicon glyphicon-remove"
+onClick={() => deleteThing(thing)}
+>
+{" "}
+</div> -->

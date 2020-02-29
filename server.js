@@ -21,14 +21,22 @@ app.get("/api/things", (req, res, next) => {
     .catch(next);
 });
 
-app.put("/api/things/update/:id", (req, res, next) => {
-  db.markComplete(req.params.id)
-    .then(thing => {
-      res.send(thing);
-    })
-    .catch(next);
-});
-
+// app.get("/api/things/:id", (req, res, next) => {
+//   db.markComplete(req.params.id)
+//   console.log("ID", id)
+//     .then(id => {
+//       res.send(id);
+//     })
+//     .catch(next);
+// });
+// app.post("/api/things/:id", (req, res, next) => {
+//   db.markComplete(req.params.id)
+//   console.log("WHERE", id)
+//     .then(id => {
+//       res.send(id);
+//     })
+//     .catch(next);
+// });
 app.post("/api/things", (req, res, next) => {
   db.createThing(req.body)
     .then(thing => {
