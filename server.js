@@ -45,12 +45,11 @@ app.post("/api/things", (req, res, next) => {
     .catch(next);
 });
 
-app.delete('/api/things/:id', (req, res, next) => {
+app.delete("/api/things/:id", (req, res, next) => {
   db.deleteThing(req.params.id)
-      .then(() => res.sendStatus(204))
-      .catch(next);
+    .then(() => res.sendStatus(204))
+    .catch(next);
 });
-
 
 // app.use((req, res, next) => {
 //   next({
@@ -65,7 +64,7 @@ app.delete('/api/things/:id', (req, res, next) => {
 //   });
 // });
 
-const port = process.env.PORT || 8081;
+const port = process.env.PORT || 8000;
 
 db.sync()
   .then(() => {

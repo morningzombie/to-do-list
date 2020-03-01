@@ -50,8 +50,9 @@
       console.log("start");
       const Things = ({ things, deleteThing, markComplete }) => {
         const getStyle = thing => {
-          document.getElementById("myBigX").className =
-            "glyphicon glyphicon-ok strike";
+          document.getElementById(thing.id).className =
+            "glyphicon glyphicon-ok";
+          // document.getElementsByTagName(li).classList.add("strike");
 
           return {
             // background: "#f4f4f4",
@@ -87,11 +88,17 @@
                 return (
                   <li className="no-dot" key={thing.id}>
                     <div
-                      id="myBigX"
-                      className="glyphicon glyphicon-remove postit-font"
-                      onClick={getStyle}
+                      id={thing.id}
+                      className="glyphicon glyphicon-pushpin postit-font"
+                      onClick={() => getStyle(thing)}
                     ></div>
                     {thing.name}
+                    <div
+                      className="glyphicon glyphicon-remove-circle"
+                      onClick={() => deleteThing(thing)}
+                    >
+                      {" "}
+                    </div>
                   </li>
                 );
               })}
